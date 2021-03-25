@@ -2,7 +2,13 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
-const formatMessage = require('./utils/messages');
+const moment = require('moment');
+
+
+const {
+  formatMessage, 
+  prevMessage } = require('./utils/messages');
+
 
 const {
   userJoin,
@@ -15,6 +21,15 @@ const {
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+
+// objects for history
+// const data = {
+//   username : 'username',
+//   text : 'text',
+//   time : 'time',
+// };
+
+var history = [];
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -29,9 +44,10 @@ io.on('connection', socket => {
     socket.join(user.room);
 
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to the Chat!'));
+    // display the previous messages for him. 
 
-
+    history.forEach(x=> socket.emit('message', prevMessage(x.username, x.text, x.time)));
+    
     // Broadcast when a user connects
     socket.broadcast
       .to(user.room)
@@ -50,6 +66,14 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
+
+    var d = new Object();
+    d.username ="user";
+    d.text ="msg";
+    d.time = moment().format('h:mm a');
+    history.push(d);
+    history = history.slice(-25);
+
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 

@@ -1,5 +1,6 @@
 const moment = require('moment');
 
+
 function formatMessage(username, text) {
   return {
     username,
@@ -8,6 +9,13 @@ function formatMessage(username, text) {
   };
 }
 
+function prevMessage(username, text, time){
+  return {
+    username,
+    text,
+    time,
+  };
+}
 
-module.exports = formatMessage;
+module.exports = {formatMessage, prevMessage};
 
