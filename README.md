@@ -8,6 +8,4 @@ npm run dev
 
 Go to localhost:3000
 ```
-## Notes
-You can run a demo of the app on heroku
-https://secure-waters-51314.herokuapp.com/
+
